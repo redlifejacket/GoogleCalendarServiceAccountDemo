@@ -39,19 +39,19 @@ public class GoogleCalendarServiceAccountDemo {
     scopes.add(CalendarScopes.CALENDAR);
     HttpTransport httpTransport = new NetHttpTransport();
     try {
-      JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
-      GoogleCredential credential = new GoogleCredential.Builder()
-          .setTransport(httpTransport)
-          .setJsonFactory(jsonFactory)
-          .setServiceAccountId(args[0])
-          .setServiceAccountUser(args[0])
-          .setServiceAccountPrivateKeyFromP12File(new File(args[1]))
-          .setServiceAccountScopes(scopes)
-          .build();
-      Calendar calendar = new Calendar.Builder(httpTransport, jsonFactory, credential)
-          .setApplicationName(GoogleCalendarServiceAccountDemo.class.getName())
-          .build();
       for (String email : args[2].split(",")) {
+        JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
+        GoogleCredential credential = new GoogleCredential.Builder()
+            .setTransport(httpTransport)
+            .setJsonFactory(jsonFactory)
+            .setServiceAccountId(args[0])
+            .setServiceAccountUser(email)
+            .setServiceAccountPrivateKeyFromP12File(new File(args[1]))
+            .setServiceAccountScopes(scopes)
+            .build();
+        Calendar calendar = new Calendar.Builder(httpTransport, jsonFactory, credential)
+            .setApplicationName(GoogleCalendarServiceAccountDemo.class.getName())
+            .build();
         GoogleCalendarServiceAccountDemo googleCalendarServiceAccountDemo = new GoogleCalendarServiceAccountDemo();
         googleCalendarServiceAccountDemo.getCalendarEventsForUser(calendar, email);
       }
@@ -77,7 +77,7 @@ public class GoogleCalendarServiceAccountDemo {
       return;
     }
 
-    System.out.println("Upcoming events for " + email);
+    System.out.println("Upcoming events for [" + email + "]");
     for (Event event : items) {
       DateTime start = event.getStart().getDateTime();
       DateTime end = event.getEnd().getDateTime();
